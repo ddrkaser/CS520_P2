@@ -50,7 +50,7 @@ class Cell:
                                   (0 <= y2 < dim))]
         return neighbors
     #unfinished
-    #now can only update kb.c
+    #now can only update kb.c and kb.n
     def update_kb(self, knowledge):
         neighbors = knowledge[self.row][self.col].findneighbors(grid)
         c = 0
@@ -59,6 +59,7 @@ class Cell:
             if grid[x][y] == 1:
                 c += 1
         knowledge[self.row][self.col].c = c
+        knowledge[self.row][self.col].n = len(neighbors)
             
     def __lt__(self, other):
         return False
@@ -85,7 +86,8 @@ knowledge[0][1].getPos()
 #should return 9999
 knowledge[0][1].blocked
 #should return list of neighbors
-neighbors = knowledge[0][1].findneighbors(grid)
+knowledge[0][1].findneighbors(grid)
 #should return correct c
 knowledge[1][2].update_kb(knowledge)
 knowledge[1][2].c
+knowledge[1][2].n
