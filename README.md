@@ -15,7 +15,7 @@ But what if you had partial information? Consider the following case: when the a
 many obstacles are neighboring it, but not where they are. A given interior cell (not against the wall) has eight
 possible neighbors (N,S,E,W,NW,NE,SW,SE) - the agent may sense that three of these neighbors are obstacles (for
 instance), but not which three. (Cells along the borders have smaller neighborhoods but the same structure applies
-- the agent senses how many of the neighboring cells are obstacles, but not which.)
+the agent senses how many of the neighboring cells are obstacles, but not which.)
 
 Clearly this is informative - knowing that there are 0 neighboring obstacles means that you can move freely in any
 direction. But for larger numbers of sensed obstacles, while this provides information, it is not necessarily clear
