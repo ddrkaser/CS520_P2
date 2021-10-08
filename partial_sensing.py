@@ -51,15 +51,38 @@ class Cell:
         return neighbors
     #unfinished
     #now can only update kb.c and kb.n
-    def update_kb(self, knowledge):
+    def sensing(self, knowledge):
         neighbors = knowledge[self.row][self.col].findneighbors(grid)
+        self.blocked = 0
+        self.visited = True
         c = 0
+        b = 0
+        e = 0
+        h = 0
         for cell in neighbors:
             y, x = cell
             if grid[x][y] == 1:
                 c += 1
-        knowledge[self.row][self.col].c = c
-        knowledge[self.row][self.col].n = len(neighbors)
+            if knowledge[x][y].blocked == 1:
+                b += 1
+            if knowledge[x][y].blocked == 0:
+                e += 0
+            if knowledge[x][y].blocked == 9999:
+                h += 1
+        self.c = c
+        self.b = b
+        self.e = e
+        self.h = h
+        self.n = len(neighbors)
+        if self.c == self.b:
+            self.h == 0
+        if self.n - self.c == self.e:
+            self.h == 0
+            for cell in neighbors:
+                y, x = cell
+                if knowledge[x][y].blocked == 9999:
+                    knowledge[x][y].blocked = 1
+                    
             
     def __lt__(self, other):
         return False
@@ -88,6 +111,8 @@ knowledge[0][1].blocked
 #should return list of neighbors
 knowledge[0][1].findneighbors(grid)
 #should return correct c
-knowledge[1][2].update_kb(knowledge)
+knowledge[1][2].sensing(knowledge)
 knowledge[1][2].c
 knowledge[1][2].n
+knowledge[1][2].b
+knowledge[1][2].h
