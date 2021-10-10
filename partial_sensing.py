@@ -52,8 +52,6 @@ class Cell:
     #sense the neigbhors, update current cell's info
     def sensing(self, knowledge):
         neighbors = knowledge[self.row][self.col].findneighbors()
-        #self.blocked = 0
-        #self.visited = True
         c = 0
         b = 0
         e = 0
@@ -73,26 +71,11 @@ class Cell:
         self.e = e
         self.h = h
         self.n = len(neighbors)
-        """
-        if self.c == self.b:
-            self.h == 0
-            for cell in neighbors:
-                x, y = cell
-                if knowledge[y][x].blocked == 9999:
-                    knowledge[y][x].blocked = 0
-        if self.n - self.c == self.e:
-            self.h == 0
-            for cell in neighbors:
-                x, y = cell
-                if knowledge[y][x].blocked == 9999:
-                    knowledge[y][x].blocked = 1
-        """
                          
     def __lt__(self, other):
         return False
 
-#generate kb based on the grid
-#unblocked = True, the knowledge treats grid as unblocked
+#generate knowledge embeded with cell class
 def generate_knowledge(grid):
     cell_list = []
     rows = len(grid)
@@ -105,6 +88,7 @@ def generate_knowledge(grid):
             cell_list[i].append(cellOBJ)
     return cell_list
 
+#inferencing info of current cell, if updated then propagate to its visited neighbors and so on
 def infering(y,x,knowledge):
     queue = [(x,y)]
     queue = check_queue(y,x,knowledge,queue)
@@ -120,7 +104,7 @@ def infering(y,x,knowledge):
                     x2, y2 = neighbor
                     if knowledge[y2][x2].blocked == 9999:
                         knowledge[y2][x2].blocked = 0
-                        #if a neighbor was updated, then add its neigbhors to queue
+                        #if a neighbor was updated, then add its visited neigbhors to queue
                         queue = check_queue(y2,x2,knowledge,queue)
             if knowledge[y1][x1].n - knowledge[y1][x1].c == knowledge[y1][x1].e:
                 knowledge[y1][x1].h == 0
@@ -128,7 +112,7 @@ def infering(y,x,knowledge):
                     x2, y2 = neighbor
                     if knowledge[y2][x2].blocked == 9999:
                         knowledge[y2][x2].blocked = 1
-                        #if a neighbor was updated, then add its neigbhors to queue
+                        #if a neighbor was updated, then add its visited neigbhors to queue
                         queue = check_queue(y2,x2,knowledge,queue)
     return knowledge
 
@@ -274,7 +258,7 @@ def algorithmA(grid, start, end, has_four_way_vision):
     return [complete_path, cell_count]
 
 def inference(grid, start, end):
-    #generate initial shortest path, assumeing the grid is unblocked
+    #generate initial shortest path
     shortest_path = A_star(generate_knowledge(grid), start, end)
     curr_knowledge = generate_knowledge(grid)
     complete_path = [(0,0)]
@@ -290,7 +274,6 @@ def inference(grid, start, end):
 			# If blocked, rerun A* and restart loop            
             if grid[y][x] == 1:
                 curr_knowledge[y][x].blocked = 1
-                curr_knowledge[prev_sq[1]][prev_sq[0]].sensing(curr_knowledge)
                 curr_knowledge = infering(prev_sq[1],prev_sq[0],curr_knowledge)
                 shortest_path = A_star(curr_knowledge, prev_sq, end)
                 #print(shortest_path)
@@ -306,7 +289,6 @@ def inference(grid, start, end):
                 curr_knowledge[y][x].blocked = 0
                 curr_knowledge[y][x].visited = True
                 if curr_knowledge[y][x].h != 0:
-                    curr_knowledge[y][x].sensing(curr_knowledge)
                     curr_knowledge = infering(y,x,curr_knowledge)
                     shortest_path = A_star(curr_knowledge, sq, end)                 
             prev_sq = sq
@@ -315,9 +297,9 @@ def inference(grid, start, end):
         is_broken = False
     return [complete_path, cell_count]    
     
-#test
+"""test 1 try cell class"""
 #PLEASE BE NOTED use knowledge[row][col] to retraive a cell!!!!
-grid = generate_gridworld(15,15,.3)
+grid = generate_gridworld(10,10,.3)
 knowledge = generate_knowledge(grid)
 #should return (1,0)
 knowledge[0][1].getPos()
@@ -331,9 +313,10 @@ knowledge[1][2].c
 knowledge[1][2].n
 knowledge[1][2].b
 knowledge[1][2].h
-#test searching algo
+"""test 2 searching algo"""
+grid = generate_gridworld(101,101,.3)
 start = (0,0)
-end = (14,14)
+end = (100,100)
 agent1 = algorithmA(grid, start, end, has_four_way_vision = False)
 agent2 = algorithmA(grid, start, end, has_four_way_vision = True)
 agent3 = inference(grid, start, end)
