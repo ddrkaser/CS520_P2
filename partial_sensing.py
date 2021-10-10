@@ -159,43 +159,28 @@ def A_star(curr_knowledge, start, end):
             shortest_path = shortest_path[::-1]
             return [shortest_path, cell_count]	
 		# Determine which neighbors are valid successors
-        #add unblocked cells first, otherwise add unknown cells
-        if curr_pos[0] > 0 and curr_knowledge[curr_pos[1]][curr_pos[0] - 1].blocked == 0: # the current node has a neighbor to its left which is unblocked
-            left_neighbor = (curr_pos[0] - 1, curr_pos[1])
-            if g[left_neighbor] > g[curr_pos] + 1: # if neighbor is undiscovered
-                successors.append(left_neighbor)
-        elif curr_pos[0] > 0 and curr_knowledge[curr_pos[1]][curr_pos[0] - 1].blocked == 9999:
+        #add unblocked or unknown cells
+        if curr_pos[0] > 0 and curr_knowledge[curr_pos[1]][curr_pos[0] - 1].blocked != 1: # the current node has a neighbor to its left which is unblocked
             left_neighbor = (curr_pos[0] - 1, curr_pos[1])
             if g[left_neighbor] > g[curr_pos] + 1: # if neighbor is undiscovered
                 successors.append(left_neighbor)
 				
-        if curr_pos[0] < len(curr_knowledge[0])  - 1 and curr_knowledge[curr_pos[1]][curr_pos[0] + 1].blocked == 0: # the current node has a neighbor to its right which is unblocked
+        if curr_pos[0] < len(curr_knowledge[0])  - 1 and curr_knowledge[curr_pos[1]][curr_pos[0] + 1].blocked != 1: # the current node has a neighbor to its right which is unblocked
             right_neighbor = (curr_pos[0] + 1, curr_pos[1])
             if g[right_neighbor] > g[curr_pos] + 1:
                 #if neighbor is undiscovered
                 successors.append(right_neighbor)
-        elif curr_pos[0] < len(curr_knowledge[0])  - 1 and curr_knowledge[curr_pos[1]][curr_pos[0] + 1].blocked == 9999: # the current node has a neighbor to its right which is unblocked
-            right_neighbor = (curr_pos[0] + 1, curr_pos[1])
-            if g[right_neighbor] > g[curr_pos] + 1: # if neighbor is undiscovered
-                successors.append(right_neighbor)
-        
-        if curr_pos[1] > 0 and curr_knowledge[curr_pos[1] - 1][curr_pos[0]].blocked == 0: # the current node has a neighbor to its top which is unblocked
+   
+        if curr_pos[1] > 0 and curr_knowledge[curr_pos[1] - 1][curr_pos[0]].blocked != 1: # the current node has a neighbor to its top which is unblocked
             top_neighbor = (curr_pos[0], curr_pos[1] - 1)
             if g[top_neighbor] > g[curr_pos] + 1: # if neighbor is undiscovered
                 successors.append(top_neighbor)
-        elif curr_pos[1] > 0 and curr_knowledge[curr_pos[1] - 1][curr_pos[0]].blocked == 9999: # the current node has a neighbor to its top which is unblocked
-            top_neighbor = (curr_pos[0], curr_pos[1] - 1)
-            if g[top_neighbor] > g[curr_pos] + 1: # if neighbor is undiscovered
-                successors.append(top_neighbor)
-				
-        if curr_pos[1] < len(curr_knowledge) - 1 and curr_knowledge[curr_pos[1] + 1][curr_pos[0]].blocked == 0: # the current node has a neighbor to its bottom which is unblocked
+                
+        if curr_pos[1] < len(curr_knowledge) - 1 and curr_knowledge[curr_pos[1] + 1][curr_pos[0]].blocked != 1: # the current node has a neighbor to its bottom which is unblocked
             bottom_neighbor = (curr_pos[0], curr_pos[1] + 1)
             if g[bottom_neighbor] > g[curr_pos] + 1: # if neighbor is undiscovered
                 successors.append(bottom_neighbor)
-        elif curr_pos[1] < len(curr_knowledge) - 1 and curr_knowledge[curr_pos[1] + 1][curr_pos[0]].blocked == 9999: # the current node has a neighbor to its bottom which is unblocked
-            bottom_neighbor = (curr_pos[0], curr_pos[1] + 1)
-            if g[bottom_neighbor] > g[curr_pos] + 1: # if neighbor is undiscovered
-                successors.append(bottom_neighbor)				
+			
         # Update shortest paths and parents for each valid successor and add to priority queue, per assignment instructions
         for successor in successors:
             g[successor] = g[curr_pos] + 1
@@ -314,9 +299,9 @@ knowledge[1][2].n
 knowledge[1][2].b
 knowledge[1][2].h
 """test 2 searching algo"""
-grid = generate_gridworld(101,101,.3)
+grid = generate_gridworld(201,201,.3)
 start = (0,0)
-end = (100,100)
+end = (200,200)
 agent1 = algorithmA(grid, start, end, has_four_way_vision = False)
 agent2 = algorithmA(grid, start, end, has_four_way_vision = True)
 agent3 = inference(grid, start, end)
