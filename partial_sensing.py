@@ -89,7 +89,6 @@ def generate_knowledge(grid):
             cell_list[i].append(cellOBJ)
     return cell_list
 
-
 #Add (x,y) neighbors which has been visited and h != 0
 def add_visited_neighbors(y,x,knowledge,queue):
     for neigbor in knowledge[y][x].findneighbors():
@@ -185,7 +184,6 @@ def expert(y1,x1,knowledge,need_update):
                         if (knowledge[y3][x3].c - knowledge[y3][x3].b == 1 or knowledge[y3][x3].n - knowledge[y3][x3].c - knowledge[y3][x3].e == 1) and knowledge[y3][x3].h != 0 and cell not in need_update:
                             need_update.append(cell)
                     break
-    print(need_update)
     return knowledge, need_update
 
 #run expertsystem, till no info to update
@@ -335,7 +333,7 @@ def inference(grid, start, end, is_expert = False):
                 curr_knowledge[y][x].blocked = 1
                 x1, y1 = prev_sq
                 curr_knowledge = infering(y1,x1,curr_knowledge)
-                if is_expert == True:
+                if is_expert == True:                    
                     if (curr_knowledge[y1][x1].c - curr_knowledge[y1][x1].b == 1 or curr_knowledge[y1][x1].n - curr_knowledge[y1][x1].c - curr_knowledge[y1][x1].e == 1) and curr_knowledge[y1][x1].h != 0:
                         curr_knowledge = run_expert(y1,x1,curr_knowledge)
                 shortest_path = A_star(curr_knowledge, prev_sq, end)
@@ -356,37 +354,33 @@ def inference(grid, start, end, is_expert = False):
                     if is_expert == True:
                         if (curr_knowledge[y][x].c - curr_knowledge[y][x].b == 1) or (curr_knowledge[y][x].n - curr_knowledge[y][x].c - curr_knowledge[y][x].e == 1):
                             curr_knowledge = run_expert(y,x,curr_knowledge)
-                    shortest_path = A_star(curr_knowledge, sq, end)
-                    print(sq)
+                    if is_path_blocked(curr_knowledge, shortest_path):
+                        shortest_path = A_star(curr_knowledge, sq, end)
+                    #print(sq)
             prev_sq = sq
         if not is_broken:
             break
         is_broken = False
     return [complete_path, cell_count]    
+
+def is_path_blocked(curr_knowledge, shortest_path):
+    for cell in shortest_path[0]:
+        x1, y1 = cell
+        if curr_knowledge[y1][x1].blocked == 1:
+            return True
+        else:
+            return False           
     
 """test 1 try cell class"""
 #PLEASE BE NOTED use knowledge[row][col] to retraive a cell!!!!
-grid = generate_gridworld(10,10,.3)
-knowledge = generate_knowledge(grid)
-#should return (1,0)
-knowledge[0][1].getPos()
-#should return 9999
-knowledge[0][1].blocked
-#should return list of neighbors
-knowledge[0][1].findneighbors()
-#should return correct c
-knowledge[1][2].sensing(knowledge)
-knowledge[1][2].c
-knowledge[1][2].n
-knowledge[1][2].b
-knowledge[1][2].h
-"""test 2 searching algo"""
 grid = generate_gridworld(101,101,.3)
 start = (0,0)
 end = (100,100)
+print("Agent 1")
 agent1 = algorithmA(grid, start, end, has_four_way_vision = False)
+print("Agent 2")
 agent2 = algorithmA(grid, start, end, has_four_way_vision = True)
+print("Agent 3")
 agent3 = inference(grid, start, end)
+print("Agent 4")
 agent4 = inference(grid, start, end, is_expert = True)
-
-    
