@@ -384,3 +384,35 @@ print("Agent 3")
 agent3 = inference(grid, start, end)
 print("Agent 4")
 agent4 = inference(grid, start, end, is_expert = True)
+
+def plot():
+    probs = list(range(0, 31, 2))
+    probs = list(map(lambda x : x / 100, probs))
+    Agent1 = {prob: [] for prob in probs}
+    Agent2 = {prob: [] for prob in probs}
+    Agent3 = {prob: [] for prob in probs}
+    Agent4 = {prob: [] for prob in probs}
+    for prob in probs:
+        trial = 0
+        while trial < 1:
+            grid = generate_gridworld(101, 101, prob)
+            start = (0,0)
+            end = (100,100)
+            res_unknown = algorithmA(grid, start, end, has_four_way_vision = False)
+            if not res_unknown:
+                continue
+            Agent1[prob] = res_unknown[1]
+            Agent2[prob] = algorithmA(grid, start, end, has_four_way_vision = True)[1]
+            Agent3[prob] = inference(grid, start, end)[1]
+            Agent4[prob] = inference(grid, start, end, is_expert = True)[1]
+            print("running trial {}".format(str(trial)))
+            trial += 1
+    plt.title("Density vs. Number of Nodes")
+    plt.xlabel("Density")
+    plt.ylabel("Number of Nodes")
+    plt.plot(probs, Agent1.values(),"b", label="Agent1")
+    plt.plot(probs, Agent2.values(),"g", label="Agent2")
+    plt.plot(probs, Agent3.values(),"r", label="Agent3")
+    plt.plot(probs, Agent4.values(),"y", label="Agent4")
+    plt.legend(loc='lower right')
+          
