@@ -107,6 +107,7 @@ def infering(y,x,knowledge):
             x1, y1 = item
             neighbors = knowledge[y1][x1].findneighbors()
             knowledge[y1][x1].sensing(knowledge)
+            #see if the information contradicts the current knowledge
             if knowledge[y1][x1].n < (knowledge[y1][x1].c + knowledge[y1][x1].e):
                 return False
             elif knowledge[y1][x1].b > knowledge[y1][x1].c:
@@ -156,7 +157,9 @@ def expert(y1,x1,knowledge,need_update):
     hidden_neighbors = add_hidden_neighbors(y1,x1,knowledge)
     for hidden_neighbor in hidden_neighbors:
             x2, y2 = hidden_neighbor
+            #if there is only one block in hidden neighbors
             if knowledge[y1][x1].c - knowledge[y1][x1].b == 1:
+                #make a copy of current knowledge to isolation the changes made by trail
                 knowledge_trail = copy.deepcopy(knowledge)
                 knowledge_trail[y2][x2].blocked = 1
                 knowledge_trail = infering(y1,x1,knowledge_trail)
@@ -170,6 +173,7 @@ def expert(y1,x1,knowledge,need_update):
                         if (knowledge[y3][x3].c - knowledge[y3][x3].b == 1 or knowledge[y3][x3].n - knowledge[y3][x3].c - knowledge[y3][x3].e == 1) and knowledge[y3][x3].h != 0 and cell not in need_update:
                             need_update.append(cell)
                     break
+            #if there is only one empty in hidden neigbhors
             if knowledge[y1][x1].n - knowledge[y1][x1].c - knowledge[y1][x1].e == 1:
                 knowledge_trail = copy.deepcopy(knowledge)
                 knowledge_trail[y2][x2].blocked = 0
